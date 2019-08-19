@@ -1,0 +1,45 @@
+containers:
+  build-env:
+    image: python:3.7
+    volumes:
+      - local: .
+        container: /src
+        options: cached
+      - local: .pip-cache
+        container: /src/.pip-cache
+        options: cached
+      - local: .venv-cache
+        container: /home/container-user/.local/share/virtualenvs
+        options: cached
+    working_directory: /src
+    environment:
+      PYTHONPATH: "/src"
+      PYTHONUSERBASE: "/src/.pip-cache"
+    run_as_current_user:
+      enabled: true
+      home_directory: /home/container-user
+
+tasks:
+  dep:
+    description: Install dependencies via pipenv
+    group: Utility tasks
+    run:
+      container: build-env
+      command: sh -c 'pip install --user pipenv; python -m pipenv install'
+
+  test:
+    description: Run the unit tests.
+    prerequisites:
+      - dep
+    run:
+      container: app
+      command: ./gradlew test
+
+  shell:
+    description: Start a shell in the development environment.
+    group: Utility tasks
+    prerequisites:
+      - dep
+    run:
+      container: build-env
+      command: /bin/sh
