@@ -11,10 +11,9 @@ So here is my take on it:
 
 ```
 .
-├── BLOGPOST.md
-├── README.md
 ├── example0   # I fell in love with how simple is was to shell into the container I just
 messed up while building it, take a look at this to understand the basics.
+
 ├── example1   # This is about getting the dependencies, caching locally to still to REPL deving in a venv
 └── example2   # This is a larger example featuring a postgres & a dummy app with an integration test.
 ```
