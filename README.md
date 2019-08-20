@@ -1,38 +1,51 @@
-# Batect-Python: Example Batext Usages for Python Development
+# Batect-Python - Using batect in a python app
 
 [batect](https://github.com/charleskorn/batect) is an interesting tool, tackling an issue I've been dealing with.
-It's created by a smart guy named Charles Korn.
+It's created by a smart guy named Charles Korn working at ThoughtWorks.
 
-It contains a bunch of usage examples, but as always I like to start
-with really simple examples and work my way up until I really understand
-what this is about.
+There are already a bunch of full fledged usage examples out there, but I was missing a
+smaller example to start with. Especially since Python seems to lend itself to a different dev
+work flow than Java or Kotlin (which btw. I don't think is true).
 
-So here:
+So here is my take on it:
 
-- example0: I fell in love with how simple it is to shell into a container.
-- example1: Is about getting dependencies and running tests, caching locally to
-  also be able to do REPL in the same venv.
-- more to come
+```
+.
+├── BLOGPOST.md
+├── README.md
+├── example0   # I fell in love with how simple is was to shell into the container I just
+messed up while building it, take a look at this to understand the basics.
+├── example1   # This is about getting the dependencies, caching locally to still to REPL deving in a venv
+└── example2   # This is a larger example featuring a postgres & a dummy app with an integration test.
+```
 
-## First, already loving it: Example 0
+The examples in detail:
 
-So first, while setting up this example, I already fell in love with it.
+### Example 0: shell into a failing build
 
-Cd into "example0", then to build & get into the container, simply do:`./batect shell`
-and you're in!
+So first, while setting up the example1 I had an error during dependency installation.
+What do I usually do about that? Comment that part, start up the container and do it by hand.
 
+Now check out this work flow, simply cd into "example0", then simply run
+
+`./batect shell`
+
+and you're in.
+
+My recommendation therefore:
 `Best Practice: Use a batect "shell" to exec into your built container. You'll need this while setting things up...`
 
 Now let's start a real example.
 
-## The simplest example
+### Example 1: Dependencies with Pipenv
 
-A python use case: I have a python 3.7 dummy script here, and I want everyone
-to know how to set up this thing, and how to work with it (i.e. by using
-pipenv). So I use batect for that, to make sure the unit tests work, no
-dependencies go missing, and everyone knows how to set it up.
+Pipenv is the hands down best way to manage dependencies in python.
+To enforce the usage of Pipenv, to make sure everyone knows which dependencies
+are needed, batect is great. It takes what you normally would do and
+pushes it into the container. The only thing you need to take care of
+is caching things right, which I set up in this example.
 
-cd into "example1".
+Cd into "example1".
 Run:
 
 ```
@@ -40,7 +53,7 @@ Run:
 ...
 ```
 
-will download the right version to your computer. We can check the tasks we created:
+This will download the right version to your computer. We can check the tasks we created:
 
 ```
 /batect --list-tasks
@@ -48,10 +61,10 @@ will download the right version to your computer. We can check the tasks we crea
 Available tasks:
 
 - dep: Install dependencies via pipenv
-- unitTest: Run the unit tests.
+- shell: ...
 ```
 
-Nice, so you can then run
+Then run
 
 ```
 ./batect dep
@@ -59,39 +72,24 @@ Nice, so you can then run
 
 to get the docker image and check whether the dependency installation works.
 
-What we should notice:
+If you take a closer look at how the files are cached it should be pretty straight
+forward to point your IDE to the cache to enable REPL programming, as is
+common in Python.
 
-- If something breaks, use the option "--no-cleanup-after-failure" to
-  let the failed container running to diagnose the issue.
-- You could even use the cached container venv to connect to and use basic
-  REPL style programming...
+### Example 2: An Integration Test
 
-## Why?
+Lastly I created a test firing up more than one container in sync.
 
-Polygot programming,..., lots of tools, companies,...
+Cd into example2 then run `$ ./batect --list-tasks` to see what's possible,
+and inspect the batect.yml to figure this out.
+
+## Why batect? My perspective
+
+Batect implements a great idea, that of the .go script:
 
 Implementation of the idea:
 "You know you're on a mature dev team when your instructions as a new team member are "check out the repo, run ./go, and you're done"." [ThoughtWorks Blog](https://www.thoughtworks.com/insights/blog/praise-go-script-part-i)
 
 "Onboard new team members in minutes: no installation required"
 
-### Alternatives: the Make or shell all the way.
-
-So the "go script" is a great idea. We started to use the "central Makefile" with
-a common syntax, and a default "make help" in all projects. But that still left
-us to use a bunch of docker-compose to set up everything else.
-
-One way around that is to use something that makes the docker-compose
-magic easier, like [Cage](http://cage.faraday.io/) that could work
-with different environments (test, dev, prod).
-
-### More cool things & notes on batect
-
-- Override references: Use anchors & mergers together like so:
-  &env => <<< merge one env var.
-- use option: cached for improved Mac performance.
-- on windows: use Unix style paths to be cross-compatible.
-
-```
-
-```
+That's an idea I love. With Polygot programming it is my believe this concept is crucial.
