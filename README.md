@@ -1,7 +1,9 @@
 # Batect-Python - Using batect in a python app
 
+![](.pics/batect_demo_1.jpg)
+
 [batect](https://github.com/charleskorn/batect) is an interesting tool, tackling an issue I've been dealing with.
-It's created by a smart guy named Charles Korn working at ThoughtWorks.
+It's created by a Charles Korn from ThoughtWorks.
 
 There are already a bunch of full fledged usage examples out there, but I was missing a
 smaller example to start with. Especially since Python seems to lend itself to a different dev
