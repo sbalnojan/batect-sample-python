@@ -8,13 +8,13 @@ containers:
       - local: .pip-cache
         container: /src/.pip-cache
         options: cached
-      - local: .venv-cache
-        container: /home/container-user/.local/share/virtualenvs
-        options: cached
+      - local: .pipenv-cache
+        container: /src/.pipenv-cache
     working_directory: /src
     environment:
       PYTHONPATH: "/src"
       PYTHONUSERBASE: "/src/.pip-cache"
+      PIPENV_VENV_IN_PROJECT: true
     run_as_current_user:
       enabled: true
       home_directory: /home/container-user
