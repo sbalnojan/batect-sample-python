@@ -18,8 +18,10 @@ containers:
     run_as_current_user:
       enabled: true
       home_directory: /home/container-user
-  db:
-    image: postgres
+  db_container:
+    build_directory: ./postgres
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
 
 
 tasks:
@@ -35,21 +37,19 @@ tasks:
     prerequisites:
       - dep
     dependencies:
-      - db
+      - db_container
     run:
       container: build-env
       command: python -m pipenv run pytest test_sql.py
 
   integration_test_pass:
     description: Run the passing integration test (and take a look what changed)
-    prerequisites:
-      - dep
     dependencies:
-      - db
+      - db_container
     run:
       container: build-env
       environment:
-        DB_HOST: db
+        DB_HOST: db_container
       command: python -m pipenv run pytest test_sql.py
 
   shell:
